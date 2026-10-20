@@ -80,12 +80,14 @@ Important rules:
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2:3b")
 
+
 def ollama_is_running():
     try:
-        r = requests.get(f"{OLLAMA_URL}/api/tags", timeout=2)
+        r = requests.get(f"{OLLAMA_URL}/health", timeout=5)
         return r.ok
     except requests.RequestException:
         return False
+
 
 st.markdown('<div class="eyebrow">PAUSE · CHECK · PAY SAFELY</div>', unsafe_allow_html=True)
 st.title("🛡️ UPI Safety Coach AI")
