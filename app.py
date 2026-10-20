@@ -77,9 +77,17 @@ Important rules:
 - If the situation is unclear, say what needs independent verification and advise not to approve/send money until verified.
 """
 
-OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2:3b")
-
+def get_setting(name, default=""):
+    if os.getenv(name):
+        return os.getenv(name)
+    try:
+        return st.secrets[name]
+    except Exception:
+        return default
+OLLAMA_URL = get_setting("OLLAMA_URL", "http://localhost:8080")
+OLLAMA_MODEL = get_setting("OLLAMA_MODEL", "llama3.2:3b")
+BRIDGE_TOKEN = get_setting("BRIDGE_TOKEN", "")
+print("Bridge token loaded:", bool(BRIDGE_TOKEN))
 
 def ollama_is_running():
     try:
@@ -87,7 +95,6 @@ def ollama_is_running():
         return r.ok
     except requests.RequestException:
         return False
-
 
 st.markdown('<div class="eyebrow">PAUSE · CHECK · PAY SAFELY</div>', unsafe_allow_html=True)
 st.title("🛡️ UPI Safety Coach AI")
@@ -134,6 +141,7 @@ with left:
                 try:
                     response = requests.post(
                         f"{OLLAMA_URL}/api/chat",
+                        headers={"Authorization": f"Bearer {BRIDGE_TOKEN}"},
                         json={
                             "model": OLLAMA_MODEL,
                             "messages": [
@@ -226,3 +234,4 @@ This is a learning tool, not a bank service or certified fraud detector. It cann
     st.markdown('</div>', unsafe_allow_html=True)
 
 st.caption("Student prototype · AI-assisted awareness only · Always verify through official channels. The report button only downloads a file; it does not submit an official complaint.")
+
