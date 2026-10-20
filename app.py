@@ -1,44 +1,22 @@
-import os
-import requests
-import streamlit as st
 from datetime import datetime
 
-st.set_page_config(
-    page_title="UPI Safety Coach AI",
-    page_icon="🛡️",
-    layout="wide",
-)
+import requests
+import streamlit as st
+
+st.set_page_config(page_title="UPI Safety Coach AI", page_icon="🛡️", layout="wide")
 
 NAVY = "#0b1730"
-PANEL = "#122344"
 MINT = "#56e0c0"
 MUTED = "#a9b8d5"
 
 st.markdown(f"""
 <style>
-.stApp {{
-  background: radial-gradient(circle at 80% 0%, #193663 0%, {NAVY} 48%);
-  color: #f4f7ff;
-}}
-.block-container {{max-width: 1120px; padding-top: 2rem; padding-bottom: 3rem;}}
-h1, h2, h3 {{ color: #f4f7ff; }}
-.hero {{
-  padding: 1.25rem 0 1.5rem 0;
-}}
-.eyebrow {{
-  color: {MINT}; font-size: .75rem; font-weight: 800; letter-spacing: 2px;
-}}
-.panel {{
-  background: rgba(18,35,68,.92); border: 1px solid #2b4168;
-  border-radius: 20px; padding: 1.25rem;
-}}
-.note {{ color: {MUTED}; font-size: .92rem; line-height: 1.55; }}
-div[data-testid="stTextArea"] textarea, div[data-testid="stSelectbox"] {{
-  background: #09162e;
-}}
-.stButton button[kind="primary"] {{
-  background: {MINT}; color: #07172b; border: 0; font-weight: 800;
-}}
+.stApp {{background: radial-gradient(circle at 80% 0%, #193663 0%, {NAVY} 48%); color:#f4f7ff;}}
+.block-container {{max-width:1120px;padding-top:2rem;padding-bottom:3rem;}}
+h1,h2,h3 {{color:#f4f7ff;}}
+.note {{color:{MUTED};font-size:.92rem;line-height:1.55;}}
+.panel {{background:rgba(18,35,68,.92);border:1px solid #2b4168;border-radius:20px;padding:1.25rem;}}
+.stButton button[kind="primary"] {{background:{MINT};color:#07172b;border:0;font-weight:800;}}
 </style>
 """, unsafe_allow_html=True)
 
@@ -46,84 +24,100 @@ SCENARIOS = {
     "Refund QR-code trick": "A caller says I must scan a QR code and enter my UPI PIN to receive a refund.",
     "OTP phishing": "A caller says my account will be blocked unless I share an OTP.",
     "Accidental payment": "A stranger says they sent money by mistake and wants me to return it to another number.",
-    "Unknown collect request": "I got a collect request from an unknown person asking me to approve and enter my UPI PIN.",
-    "Fake payment screenshot": "A buyer shows a screenshot saying they paid, but I cannot see the money in my app.",
-    "Unknown APK prize app": "A message says I won a prize and asks me to install an APK from a link.",
+    "Unknown collect request": "I got a collect request from an unknown person asking me to approve it and enter my UPI PIN.",
+    "Fake payment screenshot": "A buyer shows a screenshot saying they paid, but I cannot see the money in my official payment app.",
+    "Unknown APK prize app": "A message says I won a prize and asks me to install an app from a link.",
     "Urgent KYC link": "A text says my bank KYC expires today and asks me to sign in through a link.",
     "Screen-sharing request": "A support caller asks me to install a screen-sharing app to fix a UPI problem.",
-    "Payment to receive money": "Someone says I must pay a small fee first to receive a scholarship or prize.",
+    "Payment to receive money": "Someone says I must pay a fee first to receive a scholarship or prize.",
     "Look-alike UPI handle": "A shop's payment QR or UPI ID looks slightly different from the one the shop gave me.",
     "Fake customer-care number": "A search result gives a customer-care number and the caller asks for my PIN.",
-    "Unexpected PIN prompt": "A payment app asks for my UPI PIN after I clicked a link I did not trust.",
-    "Fake delivery fee": "A text about a parcel I did not order asks me to pay a tiny fee through a link.",
+    "Unexpected PIN prompt": "A payment app asks for my UPI PIN after I clicked a link I do not trust.",
+    "Fake delivery fee": "A text about a parcel I did not order asks me to pay a small fee through a link.",
     "Impersonation of a relative": "Someone using my relative's profile urgently asks for money to a new UPI ID.",
     "Unexpected payment received": "My app shows an unexpected incoming payment and a stranger calls asking me to send it back immediately.",
 }
 
 SYSTEM_INSTRUCTIONS = """
-You are UPI Safety Coach, an educational digital-payment safety assistant for students and families in India.
-Review a user's description of a possible UPI scam. Give practical, cautious, plain-language guidance.
-Return a helpful answer with these sections:
+You are UPI Safety Coach, an educational digital-payment safety assistant for people in India.
+Analyze ANY situation the user describes, not just predefined examples. It may be a UPI scenario,
+bank message, QR code, collect request, payment dispute, suspicious call, online shopping request,
+or a general question. If it is not about UPI or digital-payment safety, say so briefly and still
+answer any relevant general safety question within your scope.
+
+Use plain, calm, non-judgmental language. Organize the answer under:
 1. Risk level: HIGH RISK, CAUTION, or NEEDS A CLOSER CHECK.
-2. Why it may be risky: list concrete warning signs in the user's description.
-3. Safer next steps: short numbered actions.
-4. If money or account access may already be affected: recommend contacting the bank/payment app through its official app/site or the number printed on the bank card, and reporting suspected cyber financial fraud in India via 1930 and cybercrime.gov.in. Encourage a trusted adult's help for a student.
-Important rules:
-- Never ask for a UPI PIN, OTP, password, full account number, card details, or private identity data.
-- Remind users not to paste such secrets into the app. If a message contains them, tell the user to remove them and do not repeat them.
-- Do not claim you can inspect bank accounts or verify transactions.
-- Do not guarantee that something is safe or fraudulent. State that this is guidance, not a certified fraud detector.
-- Be calm, non-judgmental, and easy to understand.
-- If the situation is unclear, say what needs independent verification and advise not to approve/send money until verified.
+2. What stands out: concrete evidence from the description; distinguish facts from assumptions.
+3. What to do now: clear, numbered actions.
+4. What to verify independently: only through the official bank/payment app/site or contact details
+   printed on a bank card; never rely on a number or link sent by a suspicious caller/message.
+5. If money or account access may already be affected: contact the bank/payment provider urgently.
+   In India, suspected cyber financial fraud can be reported at 1930 and cybercrime.gov.in.
+   Encourage a student to get help from a trusted adult.
+
+Safety rules:
+- Never request or repeat UPI PINs, OTPs, passwords, full account/card details, or private identity data.
+- If the user included secrets, do not quote them back; tell them to remove them from the message.
+- Never ask the user to approve a collect request or send money as a test.
+- Never claim you can inspect a bank account, verify a transaction, identify a person, or confirm a QR code.
+- Do not guarantee something is safe or fraudulent. Explain uncertainty and what evidence is missing.
+- Do not invent facts, bank policies, links, or phone numbers.
+- A UPI PIN is used to authorize sending money, not to receive money.
+- This is educational guidance, not a certified fraud detector. If unsure, advise pausing before
+  sending/approving money and verifying through official channels.
 """
 
 def get_setting(name, default=""):
-    if os.getenv(name):
-        return os.getenv(name)
+    value = os.getenv(name)
+    if value:
+        return value
     try:
         return st.secrets[name]
     except Exception:
         return default
-OLLAMA_URL = get_setting("OLLAMA_URL", "http://localhost:8080")
+
+OLLAMA_URL = get_setting("OLLAMA_URL", "http://localhost:8080").rstrip("/")
 OLLAMA_MODEL = get_setting("OLLAMA_MODEL", "llama3.2:3b")
 BRIDGE_TOKEN = get_setting("BRIDGE_TOKEN", "")
-print("Bridge token loaded:", bool(BRIDGE_TOKEN))
 
-def ollama_is_running():
+def service_is_running():
     try:
-        r = requests.get(f"{OLLAMA_URL}/health", timeout=5)
-        return r.ok
+        response = requests.get(f"{OLLAMA_URL}/health", timeout=5)
+        return response.ok
     except requests.RequestException:
         return False
 
-st.markdown('<div class="eyebrow">PAUSE · CHECK · PAY SAFELY</div>', unsafe_allow_html=True)
+st.markdown('<p style="color:#56e0c0;font-weight:800;letter-spacing:2px;">PAUSE · CHECK · PAY SAFELY</p>', unsafe_allow_html=True)
 st.title("🛡️ UPI Safety Coach AI")
-st.markdown(
-    '<div class="hero"><h3>Think before you tap. <span style="color:#56e0c0">Spot the scam.</span></h3>'
-    '<p class="note">Describe a suspicious payment message or situation. AI will explain possible warning signs and safer next steps.</p></div>',
-    unsafe_allow_html=True
-)
+st.markdown('<p class="note">Describe any suspicious payment situation or ask a digital-payment safety question. The AI will explain possible warning signs and safer next steps.</p>', unsafe_allow_html=True)
 
-ollama_running = ollama_is_running()
-if ollama_running:
-    st.success(f"Local AI service found. Model selected: {OLLAMA_MODEL}. Do not enter private financial information.")
+running = service_is_running()
+if running:
+    st.success(f"AI service is reachable · Model: {OLLAMA_MODEL}")
 else:
-    st.warning("Local AI is not running yet. Install Ollama, download the model, and start Ollama using the README steps. No paid API key is needed.")
+    st.warning("The AI service is not reachable right now. Check that Ollama, bridge.py, and (if using a tunnel) cloudflared are running.")
 
 left, right = st.columns([1.15, .85], gap="large")
-
 with left:
     st.markdown('<div class="panel">', unsafe_allow_html=True)
-    st.subheader("🔎 Check a suspicious situation")
-    st.caption("Do not enter real bank details, UPI PINs, OTPs, passwords, phone numbers, or account information.")
-    st.info("New: risk indicator, safety checklist, and downloadable report. The risk indicator is an estimate, not a certified fraud detector.")
-    selected = st.selectbox("Try a sample scenario", ["Choose a sample…"] + list(SCENARIOS.keys()))
-    initial_text = SCENARIOS.get(selected, "")
+    st.subheader("🔎 Ask about any situation")
+    st.caption("Do not enter real UPI PINs, OTPs, passwords, bank details, full phone numbers, or identity information.")
+    selected = st.selectbox("Optional: load a sample", ["Write my own situation…"] + list(SCENARIOS.keys()))
+    sample = SCENARIOS.get(selected, "")
+    if "scenario_text" not in st.session_state:
+        st.session_state.scenario_text = sample
+    if selected != st.session_state.get("last_selected", "Write my own situation…"):
+        if selected == "Write my own situation…":
+            st.session_state.scenario_text = ""
+        else:
+            st.session_state.scenario_text = sample
+        st.session_state.last_selected = selected
     story = st.text_area(
-        "What happened?",
-        value=initial_text,
-        height=170,
-        placeholder="Example: Someone called saying they are from my bank and asked for my UPI PIN to reverse a payment…",
+        "Describe what happened or ask a question",
+        key="scenario_text",
+        height=190,
+        max_chars=5000,
+        placeholder="Example: Someone says they sent me money by mistake and is pressuring me to return it to a different UPI ID. What should I do?",
     )
     analyze = st.button("Analyze with AI →", type="primary", use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
@@ -131,17 +125,18 @@ with left:
     if analyze:
         clean_story = story.strip()
         if not clean_story:
-            st.info("Choose a sample or describe the situation first.")
-        elif len(clean_story) > 5000:
-            st.error("Please shorten the description to 5,000 characters or fewer.")
-        elif not ollama_running:
-            st.error("Local AI is not running. Start Ollama and make sure the selected model is downloaded, then try again.")
+            st.info("Type a question or describe what happened first.")
+        elif not running:
+            st.error("The AI service is not reachable. Start Ollama and bridge.py, then retry.")
         else:
-            with st.spinner("Checking for warning signs…"):
+            with st.spinner("Thinking through the details and possible warning signs…"):
                 try:
+                    headers = {"Content-Type": "application/json"}
+                    if BRIDGE_TOKEN:
+                        headers["Authorization"] = f"Bearer {BRIDGE_TOKEN}"
                     response = requests.post(
                         f"{OLLAMA_URL}/api/chat",
-                        headers={"Authorization": f"Bearer {BRIDGE_TOKEN}"},
+                        headers=headers,
                         json={
                             "model": OLLAMA_MODEL,
                             "messages": [
@@ -149,66 +144,70 @@ with left:
                                 {"role": "user", "content": clean_story},
                             ],
                             "stream": False,
+                            "options": {"temperature": 0.2},
                         },
                         timeout=180,
                     )
-                    response.raise_for_status()
-                    answer = response.json().get("message", {}).get("content", "").strip()
-                    if not answer:
-                        raise ValueError("The local model returned an empty response.")
-                    # Simple transparent heuristic score to complement—not replace—the AI answer.
-                    lower_story = clean_story.lower()
-                    high_signals = ["otp", "upi pin", "pin to receive", "scan a qr", "screen-sharing", "install an apk", "pay a fee", "urgent", "account will be blocked", "not appear", "screenshot"]
-                    hits = [term for term in high_signals if term in lower_story]
-                    risk_score = min(95, 15 + len(hits) * 13)
-                    if any(term in lower_story for term in ["upi pin", "otp", "scan a qr", "install an apk", "screen-sharing", "pay a fee"]):
-                        risk_label = "HIGH CAUTION"
-                    elif hits:
-                        risk_label = "CAUTION"
+                    if response.status_code == 401:
+                        st.error("The AI bridge returned 401 Unauthorized. Check that BRIDGE_TOKEN in Streamlit Secrets matches the token used to start bridge.py. Do not share the token in chat.")
                     else:
-                        risk_label = "NEEDS VERIFICATION"
-                    st.markdown('<div class="panel">', unsafe_allow_html=True)
-                    st.subheader("AI safety assessment")
-                    st.metric("Estimated warning level", risk_label, f"Indicator: {risk_score}/100")
-                    st.progress(risk_score / 100)
-                    st.caption("This simple indicator is based on words in the description. It is not a validated fraud score and may be wrong.")
-                    st.markdown(answer)
-                    st.markdown("#### Safety checklist")
-                    st.markdown("\n".join(["- [ ] Verify the transaction in your official bank/UPI app.", "- [ ] Do not share your PIN, OTP, or password.", "- [ ] Do not approve a collect request you do not understand.", "- [ ] If pressured, pause and contact the bank using official contact details."]))
-                    st.caption("AI guidance can be wrong. Verify independently through official channels.")
-                    report = f"UPI Safety Coach — Analysis Report\nCreated: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n\nSituation entered:\n{clean_story}\n\nEstimated warning level: {risk_label} (indicator {risk_score}/100)\n\nAI assessment:\n{answer}\n\nNote: Educational guidance only; not a certified fraud detector. Verify through official channels."
-                    st.download_button("Download analysis report (.txt)", data=report, file_name="upi_safety_analysis_report.txt", mime="text/plain")
-                    st.markdown('</div>', unsafe_allow_html=True)
-                except requests.exceptions.ConnectionError:
-                    st.error("Could not reach Ollama. Open the Ollama app and try again.")
+                        response.raise_for_status()
+                        answer = response.json().get("message", {}).get("content", "").strip()
+                        if not answer:
+                            raise ValueError("The AI returned an empty answer.")
+                        st.markdown('<div class="panel">', unsafe_allow_html=True)
+                        st.subheader("AI safety assessment")
+                        st.markdown(answer)
+                        st.markdown("#### Quick safety checklist")
+                        st.markdown("""
+- [ ] Verify the payment/request inside the official bank or UPI app.
+- [ ] Never share your PIN, OTP, or password.
+- [ ] Do not approve a collect request you do not understand.
+- [ ] Do not install apps or open links sent by suspicious contacts.
+- [ ] If pressured, pause and verify through an official channel.
+""")
+                        st.caption("This is AI-generated educational guidance, not a verified fraud finding.")
+                        report = (
+                            "UPI Safety Coach — Analysis Report\n"
+                            f"Created: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n\n"
+                            "Situation entered:\n[Review your original message for private information before sharing this report.]\n\n"
+                            f"AI assessment:\n{answer}\n\n"
+                            "Note: Educational guidance only; not a certified fraud detector. "
+                            "Verify independently through official channels."
+                        )
+                        st.download_button("Download analysis report (.txt)", data=report, file_name="upi_safety_analysis_report.txt", mime="text/plain")
+                        st.markdown('</div>', unsafe_allow_html=True)
                 except requests.exceptions.Timeout:
-                    st.error("The local model took too long to respond. Try a shorter description or a smaller model.")
-                except Exception as e:
-                    st.error("The local AI request failed. Check that the model is downloaded and Ollama is running.")
-                    st.caption(f"Technical detail: {type(e).__name__}: {e}")
+                    st.error("The AI took too long to respond. Try a shorter description or check whether the local model is still running.")
+                except requests.exceptions.ConnectionError:
+                    st.error("Could not connect to the AI service. Check Ollama, bridge.py, the tunnel URL, and internet connection.")
+                except requests.exceptions.RequestException as exc:
+                    st.error(f"The AI request failed ({type(exc).__name__}). Check the bridge logs and try again.")
+                except (ValueError, KeyError) as exc:
+                    st.error(f"The AI response could not be read ({type(exc).__name__}). Please try again.")
 
 with right:
     st.markdown('<div class="panel">', unsafe_allow_html=True)
     st.subheader("How it works")
     st.markdown("""
 **1 · Describe**  
-Choose a sample or write what happened.
+Write your own scenario or use a sample.
 
 **2 · Analyze**  
-The app sends your description to the local AI model on this computer.
+The app sends the description to your configured local AI service.
 
 **3 · Get guidance**  
-AI explains warning signs and safer actions.
+AI explains warning signs, uncertainty, and safer actions.
 
-**4 · Save a report**  
-Download the analysis as a text file. The app does not send a report to police or a bank.
+**4 · Save**  
+Download a text report if useful.
 """)
     st.markdown("---")
     st.subheader("Remember")
     st.markdown("""
 - Never share your UPI PIN or OTP.
 - You do not enter a UPI PIN to receive money.
-- Verify requests in your official UPI/bank app.
+- Check payment status in your official app, not a screenshot.
 - Do not install unknown apps from message links.
 - If unsure, stop and ask a trusted adult or your bank.
 """)
@@ -220,18 +219,19 @@ with a:
     st.markdown('<div class="panel">', unsafe_allow_html=True)
     st.subheader("🆘 If money may have been lost")
     st.markdown("""
-1. Contact your bank or UPI app using its official app/site.
+1. Contact your bank or UPI app through its official app/site.
 2. In India, report suspected cyber financial fraud promptly by calling **1930** and visiting **cybercrime.gov.in**.
-3. Save transaction references and screenshots. Never share PINs or OTPs with someone claiming to help.
+3. Keep transaction references and screenshots, but do not share PINs or OTPs with anyone claiming to help.
 """)
     st.markdown('</div>', unsafe_allow_html=True)
 with b:
     st.markdown('<div class="panel">', unsafe_allow_html=True)
     st.subheader("Privacy and limitations")
     st.markdown("""
-This is a learning tool, not a bank service or certified fraud detector. It cannot see your transactions or confirm whether a payment is genuine. The description is processed by the local model on your computer. Do not enter personal or financial secrets.
+This is a learning tool, not a bank service or certified fraud detector. It cannot see your transactions or confirm whether a payment is genuine. Do not enter personal or financial secrets. Check the hosting and AI configuration before using it with real messages.
 """)
     st.markdown('</div>', unsafe_allow_html=True)
 
-st.caption("Student prototype · AI-assisted awareness only · Always verify through official channels. The report button only downloads a file; it does not submit an official complaint.")
+st.caption("Student prototype · AI-assisted awareness only · Always verify through official channels. The report download does not submit an official complaint.")
+
 
