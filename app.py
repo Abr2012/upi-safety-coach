@@ -353,22 +353,58 @@ with st.sidebar:
 tabs = st.tabs(["AI Coach", "Scam Scanner", "Screenshot", "Voice", "Safety Quiz", "Reports", "Safety Guide", "🔗 Link Checker"])
 
 with tabs[0]:
-    st.markdown("### 👋 Welcome to your Safety Dashboard")
-    st.caption("Your quick starting point for safer UPI payments.")
+   
+    st.markdown("## 🛡️ Your UPI Safety Dashboard")
+    st.caption("Your personal command centre for safer digital payments.")
+
+    st.markdown("""
+    <div style="
+        background: linear-gradient(120deg, #102a43, #176b87);
+        padding: 22px;
+        border-radius: 16px;
+        color: white;
+        margin-bottom: 18px;">
+        <h3 style="margin: 0;">Stay alert. Stay protected.</h3>
+        <p style="margin: 8px 0 0 0;">
+            Check suspicious messages, review screenshots, and learn
+            how to recognise common UPI fraud warning signs.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
     dash1, dash2, dash3 = st.columns(3)
 
     with dash1:
-        st.markdown("#### 🛡️ Scam Scanner")
-        st.write("Check suspicious messages for common warning signs.")
+        st.markdown("""
+        <div style="border: 1px solid #38a169; padding: 16px;
+        border-radius: 14px; min-height: 150px;">
+        <h3>🛡️ Scam Scanner</h3>
+        <p>Review suspicious messages for common fraud warning signs.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
     with dash2:
-        st.markdown("#### 📸 Screenshot Check")
-        st.write("Extract text from a screenshot and review it for risks.")
+        st.markdown("""
+        <div style="border: 1px solid #3182ce; padding: 16px;
+        border-radius: 14px; min-height: 150px;">
+        <h3>📸 Screenshot Check</h3>
+        <p>Extract screenshot text and check it for possible risks.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
     with dash3:
-        st.markdown("#### 🎓 Safety Quiz")
-        st.write("Practice spotting common UPI fraud attempts.")
+        st.markdown("""
+        <div style="border: 1px solid #805ad5; padding: 16px;
+        border-radius: 14px; min-height: 150px;">
+        <h3>🎓 Safety Quiz</h3>
+        <p>Practise identifying common UPI scam attempts.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.info(
+        "🔐 Safety first: Never share your UPI PIN, OTP, password, "
+        "or secret tokens. You do not need to enter your PIN to receive money."
+    )
 
     st.divider()
 
