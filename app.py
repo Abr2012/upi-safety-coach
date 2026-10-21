@@ -236,7 +236,12 @@ def make_report_bytes(report_text):
 
 
 # ---------------------------- UI ---------------------------------------
-st.set_page_config(page_title=APP_NAME, page_icon="🛡️", layout="wide")
+st.set_page_config(
+    page_title=APP_NAME,
+    page_icon="🛡️",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 st.markdown("""
 <style>
 :root { color-scheme: light; }
