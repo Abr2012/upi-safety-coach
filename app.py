@@ -380,12 +380,31 @@ with tabs[3]:
                     language="en-IN"
                 )
 
-                st.success("Transcription complete!")
-                st.text_area(
-                    "Recognized text — copy this into AI Coach",
-                    value=transcript,
-                    key="voice_transcript"
-                )
+              
+st.success("Transcription complete!")
+
+st.session_state["voice_question"] = transcript
+
+st.text_area(
+    "Recognized question",
+    value=st.session_state["voice_question"],
+    key="voice_transcript"
+)
+
+if st.button("Ask AI Coach", key="ask_voice_ai"):
+    with st.spinner("AI Coach is analyzing your question..."):
+        answer, error = ask_ai(
+            [],
+            st.session_state["voice_question"],
+            "English"
+        )
+
+    if answer:
+        st.subheader("AI Coach's Answer")
+        st.write(answer)
+    else:
+        st.error(error)
+
 
             except sr.UnknownValueError:
                 st.warning(
