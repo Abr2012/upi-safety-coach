@@ -92,39 +92,83 @@ SUSPICIOUS_PATTERNS = [
     ("KYC or account update pressure", re.compile(r"\b(kyc|account update|re-?verify|bank details).{0,40}(click|link|expire|block|update)\b", re.I)),
 ]
 
+
 def scan_message(text):
-    """Rule-based triage only; it does not prove a message is fraudulent."""
+    """Rule-based screening; this does not prove fraud."""
     flags = []
+
     for label, pattern in SUSPICIOUS_PATTERNS:
         if pattern.search(text or ""):
             flags.append(label)
+
     urls = URL_RE.findall(text or "")
     url_notes = []
+
     for raw in urls:
         cleaned = raw.rstrip(".,);!?]")
-        parsed = urlparse(cleaned if "://" in cleaned else "https://" + cleaned)
+        parsed = urlparse(
+            cleaned if "://" in cleaned else "https://" + cleaned
+        )
         host = (parsed.hostname or "").lower()
         note = {"url": cleaned, "host": host, "warnings": []}
+
         if not host:
             note["warnings"].append("Could not parse hostname")
+
         if host.startswith("xn--") or ".xn--" in host:
-            note["warnings"].append("Internationalized/punycode hostname; inspect carefully")
+            note["warnings"].append(
+                "Internationalized/punycode hostname; inspect carefully"
+            )
+
         if re.search(r"\d{1,3}(?:\.\d{1,3}){3}", host):
-            note["warnings"].append("URL uses an IP address as its host")
+            note["warnings"].append(
+                "URL uses an IP address as its host"
+            )
+
         if host.count(".") >= 3:
-            note["warnings"].append("Many hostname levels; verify the exact domain")
+            note["warnings"].append(
+                "Many hostname levels; verify the exact domain"
+            )
+
         if "@" in parsed.netloc:
-            note["warnings"].append("Contains @ in the URL authority")
+            note["warnings"].append(
+                "Contains @ in the URL authority"
+            )
+
         if not cleaned.lower().startswith("https://"):
             note["warnings"].append("Not explicitly using HTTPS")
+
         url_notes.append(note)
 
-    if flags or urls:
-        level = "High attention" if len(flags) >= 2 or any("secret credentials" in f.lower() for f in flags) else "Needs review"
+    # Estimate warning score from detected patterns only.
+    score = min(100, len(flags) * 25)
+
+    for item in url_notes:
+        score += min(len(item["warnings"]), 3) * 10
+
+    score = min(100, score)
+
+    if (
+        len(flags) >= 2
+        or any("secret credentials" in f.lower() for f in flags)
+    ):
+        level = "High attention"
+    elif flags or urls:
+        level = "Needs review"
     else:
         level = "No obvious pattern found"
-    return {"level": level, "flags": flags, "urls": url_notes,
-            "note": "This is a pattern-based screening, not a definitive fraud verdict or live reputation check."}
+
+    return {
+        "level": level,
+        "score": score,
+        "flags": flags,
+        "urls": url_notes,
+        "note": (
+            "This score counts detected warning patterns. It is not a "
+            "verified probability of fraud or a live website reputation check."
+        ),
+    }
+
 
 
 def build_messages(history, prompt, language):
@@ -350,39 +394,7 @@ with st.sidebar:
         st.session_state.report_items = []
         st.rerun()
 
-tabs = st.tabs(["AI Coach", "Scam Scanner", "Screenshot", "Voice", "Safety Quiz", "Reports", "Safety Guide", "🔗 Link Checker"])
-
-with tabs[0]:
-   
-    st.markdown("## 🛡️ Your UPI Safety Dashboard")
-    st.caption("Your personal command centre for safer digital payments.")
-
-    st.markdown("""
-    <div style="
-        background: linear-gradient(120deg, #102a43, #176b87);
-        padding: 22px;
-        border-radius: 16px;
-        color: white;
-        margin-bottom: 18px;">
-        <h3 style="margin: 0;">Stay alert. Stay protected.</h3>
-        <p style="margin: 8px 0 0 0;">
-            Check suspicious messages, review screenshots, and learn
-            how to recognise common UPI fraud warning signs.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    dash1, dash2, dash3 = st.columns(3)
-
-    with dash1:
-        st.markdown("""
-        <div style="border: 1px solid #38a169; padding: 16px;
-        border-radius: 14px; min-height: 150px;">
-        <h3>🛡️ Scam Scanner</h3>
-        <p>Review suspicious messages for common fraud warning signs.</p>
-        </div>
-        """, unsafe_allow_html=True)
-
+Scam Scanner
     with dash2:
         st.markdown("""
         <div style="border: 1px solid #3182ce; padding: 16px;
@@ -438,6 +450,8 @@ with tabs[1]:
             st.warning("Paste a message first.")
         else:
             result = scan_message(message)
+            st.metric("Warning Score", f"{result['score']}/100")
+            st.caption("Rule-based warning score — not a verified probability of fraud.") 
             if result["level"] == "High attention":
                 st.error(f"Result: {result['level']}")
             elif result["level"] == "Needs review":
