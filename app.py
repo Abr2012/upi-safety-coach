@@ -377,6 +377,17 @@ if "quiz_score" not in st.session_state:
 if "quiz_attempts" not in st.session_state:
     st.session_state.quiz_attempts = 0
 
+tabs = st.tabs([
+    "AI Coach",
+    "Scam Scanner",
+    "Screenshot",
+    "Voice",
+    "Safety Quiz",
+    "Reports",
+    "Safety Guide",
+    "🔗 Link Checker"
+])
+
 with st.sidebar:
     st.header("Settings")
     language = st.selectbox("Response language", ["English", "தமிழ் (Tamil)", "മലയാളം (Malayalam)", "हिन्दी (Hindi)"], index=0)
