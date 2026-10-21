@@ -353,7 +353,7 @@ with st.sidebar:
 tabs = st.tabs(["AI Coach", "Scam Scanner", "Screenshot", "Voice", "Safety Quiz", "Reports", "Safety Guide"])
 
 with tabs[0]:
-        st.markdown("### 👋 Welcome to your Safety Dashboard")
+           st.markdown("### 👋 Welcome to your Safety Dashboard")
     st.caption("Your quick starting point for safer UPI payments.")
 
     dash1, dash2, dash3 = st.columns(3)
