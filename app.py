@@ -9,6 +9,7 @@ from google import genai
 
 import requests
 import streamlit as st
+import speech_recognition as sr
 
 try:
     from PIL import Image
