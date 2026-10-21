@@ -357,10 +357,11 @@ with tabs[2]:
 
 
 with tabs[3]:
+    
+with tabs[3]:
     st.subheader("Voice input")
     st.write(
-        "Record a short safety question and transcribe it into text. "
-        "An internet connection is required."
+        "Record a short safety question and transcribe it into text."
     )
 
     audio = st.audio_input("Record a safety question")
@@ -380,31 +381,9 @@ with tabs[3]:
                     language="en-IN"
                 )
 
-              
-st.success("Transcription complete!")
+                st.success("Transcription complete!")
 
-st.session_state["voice_question"] = transcript
-
-st.text_area(
-    "Recognized question",
-    value=st.session_state["voice_question"],
-    key="voice_transcript"
-)
-
-if st.button("Ask AI Coach", key="ask_voice_ai"):
-    with st.spinner("AI Coach is analyzing your question..."):
-        answer, error = ask_ai(
-            [],
-            st.session_state["voice_question"],
-            "English"
-        )
-
-    if answer:
-        st.subheader("AI Coach's Answer")
-        st.write(answer)
-    else:
-        st.error(error)
-
+                st.session_state["voice_question"] = transcript
 
             except sr.UnknownValueError:
                 st.warning(
@@ -412,17 +391,34 @@ if st.button("Ask AI Coach", key="ask_voice_ai"):
                     "Please speak clearly and try again."
                 )
 
-            except sr.RequestError:
-                st.error(
-                    "The speech recognition service is unavailable. "
-                    "Check your internet connection and try again."
-                )
+            except sr.RequestError as exc:
+                st.error(f"Speech recognition service unavailable: {exc}")
 
             except Exception as exc:
                 st.error(
-                    f"Could not transcribe the recording: "
-                    f"{type(exc).__name__}: {exc}"
+                    f"Transcription error: {type(exc).__name__}: {exc}"
                 )
+
+        if st.session_state.get("voice_question"):
+            st.text_area(
+                "Recognized question",
+                value=st.session_state["voice_question"],
+                key="voice_transcript"
+            )
+
+            if st.button("Ask AI Coach", key="ask_voice_ai"):
+                with st.spinner("AI Coach is analyzing your question..."):
+                    answer, error = ask_ai(
+                        [],
+                        st.session_state["voice_question"],
+                        "English"
+                    )
+
+                if answer:
+                    st.subheader("AI Coach's Answer")
+                    st.write(answer)
+                else:
+                    st.error(error)
 
 with tabs[4]:
     st.subheader("UPI safety quiz")
