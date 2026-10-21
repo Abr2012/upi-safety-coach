@@ -393,9 +393,8 @@ with st.sidebar:
         st.session_state.chat_history = []
         st.session_state.report_items = []
         st.rerun()
-
      # Scam Scanner
-    with dash2:
+
         st.markdown("""
         <div style="border: 1px solid #3182ce; padding: 16px;
         border-radius: 14px; min-height: 150px;">
@@ -418,7 +417,7 @@ with st.sidebar:
         "or secret tokens. You do not need to enter your PIN to receive money."
     )
 
-    st.divider()
+
 
     
     st.subheader("Ask the safety coach")
