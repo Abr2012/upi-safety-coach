@@ -449,31 +449,38 @@ with tabs[1]:
         if not message.strip():
             st.warning("Paste a message first.")
         else:
+            
             result = scan_message(message)
             st.metric("Warning Score", f"{result['score']}/100")
+
             if result["score"] >= 60:
-    st.error("Many warning patterns detected. Be extra cautious.")
-elif result["score"] >= 30:
-    st.warning("Some warning patterns detected. Check carefully.")
-else:
-    st.info("Few warning patterns detected. This does not guarantee safety.")
-            st.caption("Rule-based warning score — not a verified probability of fraud.") 
+                st.error("Many warning patterns detected. Be extra cautious.")
+            elif result["score"] >= 30:
+                st.warning("Some warning patterns detected. Check carefully.")
+            else:
+                st.info("Few warning patterns detected. This does not guarantee safety.")
+
+            st.caption("Rule-based warning score — not a verified probability of fraud.")
+
             if result["level"] == "High attention":
                 st.error(f"Result: {result['level']}")
             elif result["level"] == "Needs review":
                 st.warning(f"Result: {result['level']}")
             else:
                 st.info(f"Result: {result['level']}")
+
             if result["flags"]:
                 st.markdown("**Warning patterns found**")
                 for flag in result["flags"]:
                     st.write(f"- {flag}")
             else:
                 st.write("No listed message patterns were detected. This does not prove the message is safe.")
+
             for item in result["urls"]:
                 st.markdown(f"**URL host:** `{item['host'] or 'unparsed'}`")
                 for warning in item["warnings"]:
                     st.write(f"- {warning}")
+
             st.caption(result["note"])
             summary = json.dumps(result, ensure_ascii=False, indent=2)
             st.session_state.report_items.append({"type": "Message scan", "input": message, "result": summary, "time": datetime.now().isoformat(timespec="seconds")})
