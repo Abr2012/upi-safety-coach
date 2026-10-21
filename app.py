@@ -551,19 +551,37 @@ with st.sidebar:
 # 9. NAVIGATION TABS
 # ============================================================
 
-tabs = st.tabs([
-    "AI Coach",
-    "Scam Scanner",
-    "Screenshot",
-    "Voice",
-    "Safety Quiz",
-    "Reports",
-    "Safety Guide",
-    "🔗 Link Checker",
-    "🚨 Emergency Help",
-    "📊 Dashboard",
-    "🎮 Scam Simulator",
-])
+
+tab_labels = {
+    "English": [
+        "AI Coach", "Scam Scanner", "Screenshot", "Voice",
+        "Safety Quiz", "Reports", "Safety Guide", "🔗 Link Checker",
+        "🚨 Emergency Help", "📊 Dashboard", "🎮 Scam Simulator",
+    ],
+    "Tamil": [
+        "AI பயிற்சியாளர்", "மோசடி ஸ்கேனர்", "ஸ்கிரீன்ஷாட்", "குரல்",
+        "பாதுகாப்பு வினாடி வினா", "அறிக்கைகள்", "பாதுகாப்பு வழிகாட்டி",
+        "🔗 இணைப்பு சரிபார்ப்பு", "🚨 அவசர உதவி",
+        "📊 டாஷ்போர்டு", "🎮 மோசடி பயிற்சி",
+    ],
+    "Malayalam": [
+        "AI സഹായി", "തട്ടിപ്പ് പരിശോധന", "സ്ക്രീൻഷോട്ട്", "ശബ്ദം",
+        "സുരക്ഷാ ക്വിസ്", "റിപ്പോർട്ടുകൾ", "സുരക്ഷാ മാർഗ്ഗദർശി",
+        "🔗 ലിങ്ക് പരിശോധന", "🚨 അടിയന്തര സഹായം",
+        "📊 ഡാഷ്ബോർഡ്", "🎮 തട്ടിപ്പ് പരിശീലനം",
+    ],
+    "Hindi": [
+        "AI सहायक", "धोखाधड़ी स्कैनर", "स्क्रीनशॉट", "आवाज़",
+        "सुरक्षा प्रश्नोत्तरी", "रिपोर्ट", "सुरक्षा मार्गदर्शिका",
+        "🔗 लिंक जाँच", "🚨 आपातकालीन सहायता",
+        "📊 डैशबोर्ड", "🎮 धोखाधड़ी अभ्यास",
+    ],
+}
+
+tabs = st.tabs(
+    tab_labels.get(response_language, tab_labels["English"])
+)
+
 
 # ============================================================
 # TAB 1 — AI COACH
