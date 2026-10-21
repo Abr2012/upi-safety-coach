@@ -350,7 +350,7 @@ with st.sidebar:
         st.session_state.report_items = []
         st.rerun()
 
-tabs = st.tabs(["AI Coach", "Scam Scanner", "Screenshot", "Voice", "Safety Quiz", "Reports", "Safety Guide"])
+tabs = st.tabs(["AI Coach", "Scam Scanner", "Screenshot", "Voice", "Safety Quiz", "Reports", "Safety Guide", "🔗 Link Checker"])
 
 with tabs[0]:
     st.markdown("### 👋 Welcome to your Safety Dashboard")
@@ -569,7 +569,6 @@ with tabs[5]:
                 st.divider()
     else:
         st.info("No report items yet. Run a scan, ask the AI coach, or complete the quiz.")
-
 with tabs[6]:
     st.subheader("Trusted UPI safety guide")
     for item in KNOWLEDGE:
@@ -582,6 +581,73 @@ with tabs[6]:
 
 st.divider()
 st.caption("UPI Safety Coach AI · Educational support, not a guarantee of fraud detection. Never share UPI PINs, OTPs, passwords, or secret tokens.")
+
+with tabs[7]:
+    st.subheader("🔗 Link Safety Checker")
+    st.write("Check a suspicious link for common warning signs.")
+
+    link = st.text_input(
+        "Paste the suspicious link",
+        placeholder="https://example.com"
+    )
+
+    if st.button("🔍 Analyze Link"):
+        from urllib.parse import urlsplit
+        import ipaddress
+
+        if not link.strip():
+            st.warning("Please enter a link first.")
+        else:
+            checked_link = link.strip()
+
+            if "://" not in checked_link:
+                checked_link = "https://" + checked_link
+
+            try:
+                parsed = urlsplit(checked_link)
+                hostname = parsed.hostname
+                warnings = []
+
+                if parsed.scheme not in ("http", "https"):
+                    warnings.append("The link uses an unusual web protocol.")
+
+                if not hostname:
+                    warnings.append("The link does not contain a valid hostname.")
+                else:
+                    if parsed.scheme != "https":
+                        warnings.append("The link does not use HTTPS.")
+
+                    if parsed.username or parsed.password:
+                        warnings.append("The link contains login details before the hostname.")
+
+                    try:
+                        ipaddress.ip_address(hostname)
+                        warnings.append("The link uses a raw IP address instead of a domain name.")
+                    except ValueError:
+                        pass
+
+                    if "xn--" in hostname.lower():
+                        warnings.append("The domain contains encoded characters that may disguise its appearance.")
+
+                    if len(hostname.split(".")) > 5:
+                        warnings.append("The domain has many subdomains. Check it carefully.")
+
+                if warnings:
+                    st.error("⚠️ Warning signs found")
+                    for warning in warnings:
+                        st.write("- " + warning)
+                else:
+                    st.success("No obvious warning signs found in these basic checks.")
+
+                st.info(
+                    "This checker analyzes the link text only. It does not open "
+                    "the website and cannot guarantee that a link is safe. "
+                    "Never enter your UPI PIN or OTP to receive money."
+                )
+
+            except ValueError:
+                st.error("The link format could not be analyzed. Please check it.")
+
 
 
 
