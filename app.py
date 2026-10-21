@@ -701,7 +701,7 @@ with tabs[0]:
 # TAB 2 — SCAM SCANNER
 # ============================================================
 
-with tabs[1]:
+with tabs[1]: 
     st.subheader(ui_text("scan_heading"))
 
     st.write(
@@ -716,7 +716,12 @@ with tabs[1]:
         placeholder="Paste the suspicious SMS or message here. Remove personal details first.",
     )
 
-    
+    if st.button(ui_text("scan_button"), type="primary", key="scan_btn"):
+        if not message.strip():
+            st.warning(ui_text("empty_warning"))
+        else:
+            result = scan_message(message)
+
             st.metric("Warning Score", f"{result['score']}/100")
 
             if result["score"] >= 60:
@@ -727,6 +732,7 @@ with tabs[1]:
                 st.info(
                     "Few warning patterns detected. This does not guarantee safety."
                 )
+
 
             st.caption(
                 "Rule-based warning score — not a verified probability of fraud."
