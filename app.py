@@ -356,7 +356,7 @@ with tabs[2]:
                 st.error(f"Could not process the image ({type(exc).__name__}). Try a clear PNG or JPG image.")
 
 
-with tabs[3]:
+
     
 with tabs[3]:
     st.subheader("Voice input")
