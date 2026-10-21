@@ -29,9 +29,8 @@ except ImportError:
 # ---------------------------- Configuration ----------------------------
 APP_NAME = "UPI Safety Coach AI"
 DEFAULT_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2:3b")
-DEFAULT_URL = os.getenv("OLLAMA_URL", "http://localhost:8080").rstrip("/")
+DEFAULT_URL = os.getenv("OLLAMA_URL", "http://127.0.0.1:8080").rstrip("/")
 DEFAULT_TIMEOUT = int(os.getenv("AI_TIMEOUT_SECONDS", "120"))
-
 def secret_or_env(key, default=""):
     try:
         return st.secrets.get(key, os.getenv(key, default))
