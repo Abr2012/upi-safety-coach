@@ -554,19 +554,37 @@ with st.sidebar:
 # 9. NAVIGATION TABS
 # ============================================================
 
+
+
 # Interface translation helper
 UI_TEXT = {
     "English": {
         "ask_coach": "Ask the Safety Coach",
+        "scan_heading": "🔍 Suspicious Message Scanner",
+        "message_label": "Message to analyze",
+        "scan_button": "Scan message",
+        "empty_warning": "Paste a message first.",
     },
     "Malayalam": {
         "ask_coach": "സുരക്ഷാ സഹായിയോട് ചോദിക്കുക",
+        "scan_heading": "🔍 സംശയാസ്പദമായ സന്ദേശം പരിശോധിക്കുക",
+        "message_label": "പരിശോധിക്കേണ്ട സന്ദേശം",
+        "scan_button": "സന്ദേശം പരിശോധിക്കുക",
+        "empty_warning": "ആദ്യം ഒരു സന്ദേശം ചേർക്കുക.",
     },
     "Tamil": {
         "ask_coach": "பாதுகாப்பு உதவியாளரிடம் கேளுங்கள்",
+        "scan_heading": "🔍 சந்தேகமான செய்தி ஸ்கேனர்",
+        "message_label": "பரிசோதிக்க வேண்டிய செய்தி",
+        "scan_button": "செய்தியைச் சரிபார்க்கவும்",
+        "empty_warning": "முதலில் ஒரு செய்தியை உள்ளிடவும்.",
     },
     "Hindi": {
         "ask_coach": "सुरक्षा सहायक से पूछें",
+        "scan_heading": "🔍 संदिग्ध संदेश स्कैनर",
+        "message_label": "जाँचने के लिए संदेश",
+        "scan_button": "संदेश स्कैन करें",
+        "empty_warning": "पहले एक संदेश डालें।",
     },
 }
 
@@ -692,18 +710,13 @@ with tabs[1]:
     )
 
     message = st.text_area(
-        "Message to analyze",
+        ui_text("message_label"),
         key="scan_message",
         height=160,
         placeholder="Paste the suspicious SMS or message here. Remove personal details first.",
     )
 
-    if st.button("Scan message", type="primary", key="scan_btn"):
-        if not message.strip():
-            st.warning("Paste a message first.")
-        else:
-            result = scan_message(message)
-
+    
             st.metric("Warning Score", f"{result['score']}/100")
 
             if result["score"] >= 60:
