@@ -1381,6 +1381,48 @@ with tabs[9]:
 
     st.progress(completed / 4)
     st.caption(f"Safety checklist completed: {completed}/4")
+    
+    st.divider()
+    st.markdown("### 🏆 Safety Achievement Badges")
+    st.write("Earn badges as you practise safer UPI habits.")
+
+    quiz_done = st.session_state.get("quiz_attempts", 0) > 0
+    simulator_done = st.session_state.get("simulator_submitted", False)
+    checklist_done = completed == 4
+    perfect_quiz = st.session_state.get("quiz_score", 0) == 5 and quiz_done
+    perfect_simulator = (
+        simulator_done
+        and st.session_state.get("simulator_score", 0) == 5
+    )
+
+    badges = [
+        ("📘", "Quiz Starter", quiz_done,
+         "Complete a Safety Quiz."),
+        ("🎮", "Scam Spotter", simulator_done,
+         "Finish the Scam Simulator."),
+        ("🛡️", "Safety Champion", checklist_done,
+         "Complete all four safety checklist items."),
+        ("⭐", "Quiz Master", perfect_quiz,
+         "Get 5/5 on a Safety Quiz."),
+        ("🏆", "Scam Simulator Expert", perfect_simulator,
+         "Get 5/5 in the Scam Simulator."),
+    ]
+
+    earned = 0
+    badge_cols = st.columns(2)
+
+    for i, (emoji, name, unlocked, description) in enumerate(badges):
+        with badge_cols[i % 2]:
+            if unlocked:
+                earned += 1
+                st.success(f"{emoji} **{name}**")
+            else:
+                st.info(f"🔒 **{name}**")
+            st.caption(description)
+
+    st.progress(earned / len(badges))
+    st.caption(f"Badges earned this session: {earned}/{len(badges)}")
+
 
     st.divider()
 
