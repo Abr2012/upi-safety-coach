@@ -486,7 +486,7 @@ with st.sidebar:
     st.header("⚙️ Settings")
 
     
-   language_options = [
+  language_options = [
     "English",
     "Tamil",
     "Malayalam",
@@ -518,7 +518,6 @@ with st.sidebar:
     "Burmese",
     "Ukrainian",
 ]
-
     language = st.selectbox(
         "Response language",
         [name for name, _ in language_options],
