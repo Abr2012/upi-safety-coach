@@ -606,8 +606,8 @@ with tabs[7]:
             try:
                 parsed = urlsplit(checked_link)
                 hostname = parsed.hostname
-                
-warnings = []
+                warnings = []
+
 
                 suspicious_words = [
                     "upi-refund",
