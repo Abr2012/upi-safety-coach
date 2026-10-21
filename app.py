@@ -30,7 +30,7 @@ except ImportError:
 # ---------------------------- Configuration ----------------------------
 APP_NAME = "UPI Safety Coach AI"
 
-GEMINI_MODEL = "gemini-3.8-flash"
+GEMINI_MODEL = "gemini-3.5-flash-lite"
 
 try:
     GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
