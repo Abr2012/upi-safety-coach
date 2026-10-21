@@ -242,16 +242,82 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
 st.markdown("""
 <style>
-:root { color-scheme: light; }
-.block-container { max-width: 1180px; padding-top: 1.4rem; padding-bottom: 3rem; }
-.hero { padding: 1.35rem 1.5rem; border-radius: 18px; background: linear-gradient(120deg,#102a43,#176b87); color: white; margin-bottom: 1rem; }
-.hero h1 { color: white; margin: 0 0 .35rem 0; font-size: 2rem; }
-.hero p { margin: 0; opacity: .94; }
-.small-note { color: #52606d; font-size: .9rem; }
-div[data-testid="stMetric"] { border: 1px solid #d9e2ec; border-radius: 12px; padding: 12px; background: rgba(255,255,255,.65); }
+:root {
+    color-scheme: light;
+}
+
+.stApp {
+    background: #f4f7fb;
+}
+
+.block-container {
+    max-width: 1250px;
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
+}
+
+.hero {
+    padding: 2rem;
+    border-radius: 22px;
+    background: linear-gradient(120deg, #102a43 0%, #176b87 60%, #2a9d8f 100%);
+    color: white;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 10px 28px rgba(16, 42, 67, 0.16);
+}
+
+.hero h1 {
+    color: white;
+    margin: 0 0 .5rem 0;
+    font-size: 2.2rem;
+    font-weight: 800;
+}
+
+.hero p {
+    color: #edfaff;
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.6;
+}
+
+.small-note {
+    color: #52606d;
+    font-size: .9rem;
+}
+
+div[data-testid="stMetric"] {
+    border: 1px solid #d9e2ec;
+    border-radius: 16px;
+    padding: 16px;
+    background: white;
+    box-shadow: 0 4px 14px rgba(16, 42, 67, 0.05);
+}
+
+div[data-testid="stTabs"] button {
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.stButton > button {
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all .2s ease;
+}
+
+.stButton > button:hover {
+    border-color: #176b87;
+    color: #176b87;
+}
+
+div[data-testid="stExpander"] {
+    border-radius: 12px;
+    border: 1px solid #d9e2ec;
+}
+
 </style>
+
 <div class="hero">
   <h1>🛡️ UPI Safety Coach AI</h1>
   <p>Pause. Verify. Pay safely. Understand suspicious messages before acting.</p>
