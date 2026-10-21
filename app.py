@@ -486,38 +486,39 @@ with st.sidebar:
     st.header("⚙️ Settings")
 
     
-  language_options = [
-    "English",
-    "Tamil",
-    "Malayalam",
-    "Hindi",
-    "Bengali",
-    "Telugu",
-    "Kannada",
-    "Marathi",
-    "Gujarati",
-    "Punjabi",
-    "Urdu",
-    "Spanish",
-    "French",
-    "Arabic",
-    "Chinese",
-    "Japanese",
-    "Korean",
-    "Portuguese",
-    "German",
-    "Russian",
-    "Indonesian",
-    "Thai",
-    "Turkish",
-    "Swahili",
-    "Italian",
-    "Nepali",
-    "Sinhala",
-    "Persian",
-    "Burmese",
-    "Ukrainian",
-]
+     language_options = [
+        ("English", "English"),
+        ("Tamil", "Tamil"),
+        ("Malayalam", "Malayalam"),
+        ("Hindi", "Hindi"),
+        ("Bengali", "Bengali"),
+        ("Telugu", "Telugu"),
+        ("Kannada", "Kannada"),
+        ("Marathi", "Marathi"),
+        ("Gujarati", "Gujarati"),
+        ("Punjabi", "Punjabi"),
+        ("Urdu", "Urdu"),
+        ("Spanish", "Spanish"),
+        ("French", "French"),
+        ("Arabic", "Arabic"),
+        ("Chinese", "Chinese"),
+        ("Japanese", "Japanese"),
+        ("Korean", "Korean"),
+        ("Portuguese", "Portuguese"),
+        ("German", "German"),
+        ("Russian", "Russian"),
+        ("Indonesian", "Indonesian"),
+        ("Thai", "Thai"),
+        ("Turkish", "Turkish"),
+        ("Swahili", "Swahili"),
+        ("Italian", "Italian"),
+        ("Nepali", "Nepali"),
+        ("Sinhala", "Sinhala"),
+        ("Persian", "Persian"),
+        ("Burmese", "Burmese"),
+        ("Ukrainian", "Ukrainian"),
+    ]
+
     language = st.selectbox(
         "Response language",
         [name for name, _ in language_options],
@@ -526,7 +527,6 @@ with st.sidebar:
 
     language_map = dict(language_options)
     response_language = language_map[language]
-
 
     st.caption("AI provider: Google Gemini")
     st.caption(
