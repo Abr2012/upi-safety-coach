@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 
 import requests
 import streamlit as st
-from streamlit_mic_recorder import speech_to_text
+
 
 try:
     from PIL import Image
