@@ -586,7 +586,7 @@ tabs = st.tabs(
 # ============================================================
 
 with tabs[0]:
-    st.subheader("💬 Ask the Safety Coach")
+    st.subheader("💬 " + ui_text("ask_coach"))
 
     st.write(
         "Ask about suspicious UPI payments, refunds, QR codes, "
