@@ -637,7 +637,7 @@ with tabs[7]:
                     warnings.append("The link does not contain a valid hostname.")
                 else:
                     if parsed.scheme != "https":
-                    warnings.append("The link does not use HTTPS.")    
+                        warnings.append("The link does not use HTTPS.")    
                         
                     try:
                         port = parsed.port
