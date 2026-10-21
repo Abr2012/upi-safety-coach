@@ -387,6 +387,9 @@ tabs = st.tabs([
     "Safety Guide",
     "🔗 Link Checker"
 ])
+with tabs[0]:
+    st.title("🛡️ UPI Safety Coach")
+    st.write("Ask questions about suspicious UPI payments, refunds, QR codes, and possible scams.")
 
 with st.sidebar:
     st.header("Settings")
@@ -416,26 +419,7 @@ with st.sidebar:
 
 
     
-    st.subheader("Ask the safety coach")
-    st.caption("Ask about UPI payments, suspicious calls, refunds, QR codes, or what to do after a possible scam.")
-    for entry in st.session_state.chat_history:
-        with st.chat_message(entry["role"]):
-            st.markdown(entry["content"])
-    prompt = st.chat_input("Example: Someone asks me to enter my UPI PIN to receive money...")
-    if prompt:
-        st.session_state.chat_history.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
-        with st.chat_message("assistant"):
-            with st.spinner("Checking your question..."):
-                answer, error = ask_ai(st.session_state.chat_history[:-1], prompt, response_language)
-            if error:
-                st.error(error)
-                answer = "I couldn't reach the AI service. Please use the Safety Guide tab for basic guidance while you check the connection."
-            st.markdown(answer)
-        st.session_state.chat_history.append({"role": "assistant", "content": answer})
-        st.session_state.report_items.append({"type": "AI chat", "input": prompt, "result": answer, "time": datetime.now().isoformat(timespec="seconds")})
-
+   
 with tabs[1]:
     st.subheader("Suspicious message and URL scanner")
     st.write("Paste a message to check for common warning patterns. The scanner does not visit URLs or confirm a website's reputation.")
