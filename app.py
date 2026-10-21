@@ -202,9 +202,9 @@ def ask_ai(history, prompt, language):
 
     except Exception as exc:
         return None, (
-            f"Cloud AI request failed ({type(exc).__name__}). "
-            "Check the API key, model access, and usage limits."
-        )
+    f"Cloud AI error: {type(exc).__name__}: "
+    f"{str(exc)[:300]}"
+)
 
 
 
