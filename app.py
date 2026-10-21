@@ -451,6 +451,12 @@ with tabs[1]:
         else:
             result = scan_message(message)
             st.metric("Warning Score", f"{result['score']}/100")
+            if result["score"] >= 60:
+    st.error("Many warning patterns detected. Be extra cautious.")
+elif result["score"] >= 30:
+    st.warning("Some warning patterns detected. Check carefully.")
+else:
+    st.info("Few warning patterns detected. This does not guarantee safety.")
             st.caption("Rule-based warning score — not a verified probability of fraud.") 
             if result["level"] == "High attention":
                 st.error(f"Result: {result['level']}")
@@ -488,6 +494,7 @@ with tabs[2]:
                 st.text_area("Extracted text (review before scanning)", value=extracted, height=160, key="ocr_text")
                 if extracted.strip():
                     result = scan_message(extracted)
+                    st.metric("Warning Score", f"{result['score']}/100")
                     st.info(f"Pattern scan: {result['level']}")
                     for flag in result["flags"]:
                         st.write(f"- {flag}")
