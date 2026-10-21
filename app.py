@@ -485,25 +485,49 @@ if "voice_question" not in st.session_state:
 with st.sidebar:
     st.header("⚙️ Settings")
 
+    
+    language_options = [
+        ("English", "English"),
+        ("தமிழ் (Tamil)", "Tamil"),
+        ("മലയാളം (Malayalam)", "Malayalam"),
+        ("हिन्दी (Hindi)", "Hindi"),
+        ("বাংলা (Bengali)", "Bengali"),
+        ("తెలుగు (Telugu)", "Telugu"),
+        ("ಕನ್ನಡ (Kannada)", "Kannada"),
+        ("मराठी (Marathi)", "Marathi"),
+        ("ગુજરાતી (Gujarati)", "Gujarati"),
+        ("ਪੰਜਾਬੀ (Punjabi)", "Punjabi"),
+        ("اردو (Urdu)", "Urdu"),
+        ("Español (Spanish)", "Spanish"),
+        ("Français (French)", "French"),
+        ("العربية (Arabic)", "Arabic"),
+        ("中文 (Chinese)", "Chinese"),
+        ("日本語 (Japanese)", "Japanese"),
+        ("한국어 (Korean)", "Korean"),
+        ("Português (Portuguese)", "Portuguese"),
+        ("Deutsch (German)", "German"),
+        ("Русский (Russian)", "Russian"),
+        ("Bahasa Indonesia (Indonesian)", "Indonesian"),
+        ("ไทย (Thai)", "Thai"),
+        ("Türkçe (Turkish)", "Turkish"),
+        ("Kiswahili (Swahili)", "Swahili"),
+        ("Italiano (Italian)", "Italian"),
+        ("नेपाली (Nepali)", "Nepali"),
+        ("සිංහල (Sinhala)", "Sinhala"),
+        ("فارسی (Persian)", "Persian"),
+        ("မြန်မာ (Burmese)", "Burmese"),
+        ("Українська (Ukrainian)", "Ukrainian"),
+    ]
+
     language = st.selectbox(
         "Response language",
-        [
-            "English",
-            "தமிழ் (Tamil)",
-            "മലയാളം (Malayalam)",
-            "हिन्दी (Hindi)",
-        ],
+        [name for name, _ in language_options],
         index=0,
     )
 
-    language_map = {
-        "English": "English",
-        "தமிழ் (Tamil)": "Tamil",
-        "മലയാളം (Malayalam)": "Malayalam",
-        "हिन्दी (Hindi)": "Hindi",
-    }
-
+    language_map = dict(language_options)
     response_language = language_map[language]
+
 
     st.caption("AI provider: Google Gemini")
     st.caption(
