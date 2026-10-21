@@ -485,8 +485,7 @@ if "voice_question" not in st.session_state:
 with st.sidebar:
     st.header("⚙️ Settings")
 
-    
-     language_options = [
+    language_options = [
         ("English", "English"),
         ("Tamil", "Tamil"),
         ("Malayalam", "Malayalam"),
