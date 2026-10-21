@@ -536,8 +536,8 @@ tabs = st.tabs([
     "Reports",
     "Safety Guide",
     "🔗 Link Checker",
+    "🚨 Emergency Help",
 ])
-
 
 # ============================================================
 # TAB 1 — AI COACH
@@ -1189,7 +1189,121 @@ st.caption(
     "🛡️ UPI Safety Coach AI · Educational support, not a guarantee "
     "of fraud detection. Never share UPI PINs, OTPs, passwords, or secret tokens."
 )
+# ============================================================
+# TAB 9 — EMERGENCY FRAUD HELPER
+# ============================================================
 
+with tabs[8]:
+    st.subheader("🚨 Emergency Fraud Helper")
+
+    st.warning(
+        "If you suspect a payment scam, act promptly. "
+        "Never share your UPI PIN, OTP, or banking password."
+    )
+
+    st.markdown("### What happened?")
+
+    situation = st.radio(
+        "Choose the situation that best describes your problem:",
+        [
+            "I sent money to a suspicious person",
+            "Money was deducted without my permission",
+            "I shared an OTP or sensitive information",
+            "I received a suspicious payment request",
+            "I clicked a suspicious link",
+            "I am not sure what happened",
+        ],
+        key="emergency_situation",
+    )
+
+    st.markdown("### Recommended next steps")
+
+    if situation == "I sent money to a suspicious person":
+        st.error("Act promptly")
+
+        st.markdown("""
+        1. Contact your bank or payment app using its official support channel.
+        2. Report suspected financial cyber fraud in India at
+           [cybercrime.gov.in](https://cybercrime.gov.in/).
+        3. Call **1930** as soon as possible to report suspected
+           financial cyber fraud in India.
+        4. Keep the transaction ID, amount, time, and relevant messages.
+        5. Do not send more money to anyone promising to recover your funds.
+        """)
+
+    elif situation == "Money was deducted without my permission":
+        st.error("Contact your bank immediately")
+
+        st.markdown("""
+        1. Contact your bank through its official app or verified phone number.
+        2. Ask about securing your account and disputing the unauthorized transaction.
+        3. Report suspected cyber financial fraud at
+           [cybercrime.gov.in](https://cybercrime.gov.in/)
+           or call **1930** in India.
+        4. Preserve transaction alerts and relevant evidence.
+        """)
+
+    elif situation == "I shared an OTP or sensitive information":
+        st.error("Secure your account")
+
+        st.markdown("""
+        1. Contact your bank immediately using its official contact details.
+        2. Explain what information you shared and follow the bank's advice.
+        3. Change affected passwords through official channels if necessary.
+        4. Never share any further OTPs, PINs, or passwords with callers.
+        5. If money was taken or a fraudulent transaction is suspected,
+           report it promptly through official cybercrime channels.
+        """)
+
+    elif situation == "I received a suspicious payment request":
+        st.warning("Do not approve it until verified")
+
+        st.markdown("""
+        1. Do not approve an unfamiliar collect request.
+        2. Do not enter your UPI PIN to receive money.
+        3. Verify the sender using a separate trusted channel.
+        4. Ignore pressure to act urgently.
+        5. If you are unsure, contact your payment provider through its official app.
+        """)
+
+    elif situation == "I clicked a suspicious link":
+        st.warning("Take precautions")
+
+        st.markdown("""
+        1. Do not enter banking details or OTPs on the suspicious website.
+        2. If you downloaded an unfamiliar app, do not open it; seek
+           trusted technical help to remove it safely.
+        3. If you entered banking credentials, contact your bank promptly.
+        4. If you installed an app or granted remote access, tell your bank
+           and seek help securing your device.
+        5. Report any suspected financial loss through official channels.
+        """)
+
+    else:
+        st.info("Pause and verify before taking further action.")
+
+        st.markdown("""
+        1. Do not approve payment requests you do not understand.
+        2. Do not share your UPI PIN, OTP, or password.
+        3. Check your payment app and bank account through official channels.
+        4. Contact your bank if you notice an unfamiliar transaction.
+        """)
+
+    st.divider()
+
+    st.markdown("### Official reporting resources")
+
+    st.markdown(
+        "- **National Cyber Crime Reporting Portal:** "
+        "[cybercrime.gov.in](https://cybercrime.gov.in/)"
+    )
+
+    st.markdown("- **Cyber financial fraud helpline in India:** 1930")
+
+    st.caption(
+        "This helper provides general guidance. It cannot freeze an account, "
+        "reverse a transaction, or file a report on your behalf."
+    )
 
 
 
