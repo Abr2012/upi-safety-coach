@@ -537,6 +537,7 @@ tabs = st.tabs([
     "Safety Guide",
     "🔗 Link Checker",
     "🚨 Emergency Help",
+    "📊 Dashboard",
 ])
 
 # ============================================================
@@ -1304,7 +1305,111 @@ with tabs[8]:
         "This helper provides general guidance. It cannot freeze an account, "
         "reverse a transaction, or file a report on your behalf."
     )
+# ============================================================
+# TAB 10 — SAFETY DASHBOARD
+# ============================================================
 
+with tabs[9]:
+    st.subheader("📊 Your Safety Dashboard")
+    st.write("Track your UPI safety learning during this session.")
+
+    reports = st.session_state.report_items
+
+    total_analyses = sum(
+        1 for item in reports
+        if item["type"] in [
+            "AI Coach",
+            "Message scan",
+            "Screenshot scan",
+            "Link check",
+            "Voice AI question",
+        ]
+    )
+
+    quiz_attempts = st.session_state.quiz_attempts
+    latest_score = st.session_state.quiz_score
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.metric("Analyses completed", total_analyses)
+
+    with col2:
+        st.metric("Quiz attempts", quiz_attempts)
+
+    col3, col4 = st.columns(2)
+
+    with col3:
+        st.metric("Latest quiz score", f"{latest_score}/5")
+
+    with col4:
+        st.metric("Items in session report", len(reports))
+
+    st.divider()
+
+    st.markdown("### 🛡️ Safety checklist")
+
+    st.write("Use this checklist to practise safer payment habits.")
+
+    st.checkbox(
+        "I never share my UPI PIN or OTP.",
+        key="dash_pin_safety",
+    )
+
+    st.checkbox(
+        "I verify the recipient before making a payment.",
+        key="dash_recipient_safety",
+    )
+
+    st.checkbox(
+        "I avoid unfamiliar payment requests and suspicious links.",
+        key="dash_link_safety",
+    )
+
+    st.checkbox(
+        "I know how to contact my bank if fraud is suspected.",
+        key="dash_emergency_safety",
+    )
+
+    completed = sum([
+        st.session_state.get("dash_pin_safety", False),
+        st.session_state.get("dash_recipient_safety", False),
+        st.session_state.get("dash_link_safety", False),
+        st.session_state.get("dash_emergency_safety", False),
+    ])
+
+    st.progress(completed / 4)
+    st.caption(f"Safety checklist completed: {completed}/4")
+
+    st.divider()
+
+    st.markdown("### 🚦 Understand the warning levels")
+
+    st.success(
+        "LOW: Few known warning patterns were found. "
+        "This does not prove a message is safe."
+    )
+
+    st.warning(
+        "MEDIUM: Some warning signs may need closer checking."
+    )
+
+    st.error(
+        "HIGH: Strong warning signs may be present. "
+        "Pause and verify through official channels."
+    )
+
+    st.info(
+        "Your scanner's score is based on warning patterns, not a verified "
+        "probability of fraud. This dashboard tracks the current session only."
+    )
+
+    st.markdown("### 💡 Daily safety reminder")
+
+    st.write(
+        "You generally do not need to enter your UPI PIN to receive money. "
+        "Never share your PIN, OTP, or banking password."
+    )
 
 
 
