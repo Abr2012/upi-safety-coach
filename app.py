@@ -355,13 +355,55 @@ with tabs[2]:
             except Exception as exc:
                 st.error(f"Could not process the image ({type(exc).__name__}). Try a clear PNG or JPG image.")
 
+
 with tabs[3]:
     st.subheader("Voice input")
-    st.write("If your browser supports Streamlit's audio input, record a short question and upload the recording. Speech-to-text is optional and requires extra packages.")
+    st.write(
+        "Record a short safety question and transcribe it into text. "
+        "An internet connection is required."
+    )
+
     audio = st.audio_input("Record a safety question")
+
     if audio:
         st.audio(audio)
-        st.info("Audio recording is available, but automatic transcription is not enabled in this starter version. You can type the question in AI Coach. To add speech recognition, select and configure a speech-to-text provider or install a supported offline engine.")
+
+        if st.button("Transcribe recording", key="transcribe_voice"):
+            try:
+                recognizer = sr.Recognizer()
+
+                with sr.AudioFile(io.BytesIO(audio.getvalue())) as source:
+                    recorded_audio = recognizer.record(source)
+
+                transcript = recognizer.recognize_google(
+                    recorded_audio,
+                    language="en-IN"
+                )
+
+                st.success("Transcription complete!")
+                st.text_area(
+                    "Recognized text — copy this into AI Coach",
+                    value=transcript,
+                    key="voice_transcript"
+                )
+
+            except sr.UnknownValueError:
+                st.warning(
+                    "I couldn't understand the recording. "
+                    "Please speak clearly and try again."
+                )
+
+            except sr.RequestError:
+                st.error(
+                    "The speech recognition service is unavailable. "
+                    "Check your internet connection and try again."
+                )
+
+            except Exception as exc:
+                st.error(
+                    f"Could not transcribe the recording: "
+                    f"{type(exc).__name__}: {exc}"
+                )
 
 with tabs[4]:
     st.subheader("UPI safety quiz")
