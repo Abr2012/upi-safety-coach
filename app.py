@@ -394,7 +394,7 @@ with st.sidebar:
         st.session_state.report_items = []
         st.rerun()
 
-Scam Scanner
+ Scam Scanner
     with dash2:
         st.markdown("""
         <div style="border: 1px solid #3182ce; padding: 16px;
