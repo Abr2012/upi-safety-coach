@@ -353,6 +353,26 @@ with st.sidebar:
 tabs = st.tabs(["AI Coach", "Scam Scanner", "Screenshot", "Voice", "Safety Quiz", "Reports", "Safety Guide"])
 
 with tabs[0]:
+        st.markdown("### 👋 Welcome to your Safety Dashboard")
+    st.caption("Your quick starting point for safer UPI payments.")
+
+    dash1, dash2, dash3 = st.columns(3)
+
+    with dash1:
+        st.markdown("#### 🛡️ Scam Scanner")
+        st.write("Check suspicious messages for common warning signs.")
+
+    with dash2:
+        st.markdown("#### 📸 Screenshot Check")
+        st.write("Extract text from a screenshot and review it for risks.")
+
+    with dash3:
+        st.markdown("#### 🎓 Safety Quiz")
+        st.write("Practice spotting common UPI fraud attempts.")
+
+    st.divider()
+
+    
     st.subheader("Ask the safety coach")
     st.caption("Ask about UPI payments, suspicious calls, refunds, QR codes, or what to do after a possible scam.")
     for entry in st.session_state.chat_history:
