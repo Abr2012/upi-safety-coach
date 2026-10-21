@@ -684,7 +684,7 @@ with tabs[0]:
 # ============================================================
 
 with tabs[1]:
-    st.subheader("🔍 Suspicious Message Scanner")
+    st.subheader(ui_text("scan_heading"))
 
     st.write(
         "Paste a suspicious message to check for common warning patterns. "
