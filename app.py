@@ -5,6 +5,7 @@ import re
 import time
 from datetime import datetime
 from urllib.parse import urlparse
+from google import genai
 
 import requests
 import streamlit as st
@@ -28,6 +29,14 @@ except ImportError:
 
 # ---------------------------- Configuration ----------------------------
 APP_NAME = "UPI Safety Coach AI"
+
+GEMINI_MODEL = "gemini-2.5-flash"
+
+try:
+    GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
+except Exception:
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+
 DEFAULT_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2:3b")
 DEFAULT_URL = os.getenv("OLLAMA_URL", "http://127.0.0.1:8080").rstrip("/")
 DEFAULT_TIMEOUT = int(os.getenv("AI_TIMEOUT_SECONDS", "120"))
@@ -133,38 +142,70 @@ Use this safety reference where relevant:
     return messages
 
 
+
 def ask_ai(history, prompt, language):
-    headers = {"Content-Type": "application/json"}
-    if BRIDGE_TOKEN:
-        headers["Authorization"] = f"Bearer {BRIDGE_TOKEN}"
-    payload = {
-        "model": OLLAMA_MODEL,
-        "messages": build_messages(history, prompt, language),
-        "stream": False,
-    }
-    endpoint = f"{OLLAMA_URL}/api/chat"
+    if not GEMINI_API_KEY:
+        return None, "Google Gemini API key is missing. Check Streamlit Secrets."
+
     try:
-        response = requests.post(endpoint, headers=headers, json=payload, timeout=AI_TIMEOUT)
-        if response.status_code == 401:
-            return None, "The AI bridge rejected authentication (401). Check the Streamlit BRIDGE_TOKEN secret matches the bridge configuration."
-        response.raise_for_status()
-        data = response.json()
-        # Supports standard Ollama /api/chat response.
-        answer = (data.get("message") or {}).get("content")
+        client = genai.Client(api_key=GEMINI_API_KEY)
+
+        messages = build_messages(history, prompt, language)
+        system_instructions = []
+        contents = []
+
+        for message in messages:
+            role = message.get("role", "user")
+            text_content = str(message.get("content", ""))
+
+            if not text_content.strip():
+                continue
+
+            if role == "system":
+                system_instructions.append(text_content)
+            elif role == "assistant":
+                contents.append({
+                    "role": "model",
+                    "parts": [{"text": text_content}]
+                })
+            else:
+                contents.append({
+                    "role": "user",
+                    "parts": [{"text": text_content}]
+                })
+
+        if not contents:
+            return None, "Please enter a question and try again."
+
+        config = {
+            "temperature": 0.2,
+            "max_output_tokens": 1024,
+        }
+
+        if system_instructions:
+            config["system_instruction"] = "\n\n".join(
+                system_instructions
+            )
+
+        response = client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents=contents,
+            config=config,
+        )
+
+        answer = (response.text or "").strip()
+
         if not answer:
-            answer = data.get("response")
-        if not answer:
-            return None, "The AI service replied, but no answer text was found. Check the bridge response format."
-        return answer.strip(), None
-    except requests.exceptions.Timeout:
-        return None, "The AI service timed out. Try again, or check that Ollama and the bridge are running."
-    except requests.exceptions.ConnectionError:
-        return None, "Could not connect to the AI service. Check the bridge, Ollama, and the current tunnel URL."
-    except requests.exceptions.HTTPError as exc:
-        status = exc.response.status_code if exc.response is not None else "unknown"
-        return None, f"The AI service returned HTTP {status}. Check the bridge logs and configuration."
-    except (requests.exceptions.RequestException, ValueError) as exc:
-        return None, f"Could not read the AI service response ({type(exc).__name__}). Check the service logs."
+            return None, "The cloud AI returned no text. Please try again."
+
+        return answer, None
+
+    except Exception as exc:
+        return None, (
+            f"Cloud AI request failed ({type(exc).__name__}). "
+            "Check the API key, model access, and usage limits."
+        )
+
 
 
 def make_report_bytes(report_text):
