@@ -606,7 +606,29 @@ with tabs[7]:
             try:
                 parsed = urlsplit(checked_link)
                 hostname = parsed.hostname
-                warnings = []
+                
+warnings = []
+
+                suspicious_words = [
+                    "upi-refund",
+                    "verify-account",
+                    "claim-prize",
+                    "free-gift",
+                    "urgent-payment",
+                    "account-suspended",
+                    "kyc-update",
+                    "login-verify",
+                    "password-reset",
+                    "receive-refund",
+                ]
+
+                lower_link = checked_link.lower()
+
+                for word in suspicious_words:
+                    if word in lower_link:
+                        warnings.append(
+                            f"The link contains a suspicious term: '{word}'."
+                        )
 
                 if parsed.scheme not in ("http", "https"):
                     warnings.append("The link uses an unusual web protocol.")
@@ -615,9 +637,33 @@ with tabs[7]:
                     warnings.append("The link does not contain a valid hostname.")
                 else:
                     if parsed.scheme != "https":
+                        
+                    try:
+                        port = parsed.port
+                        if port is not None and port not in (80, 443):
+                            warnings.append(
+                                f"The link uses an unusual port: {port}."
+                            )
+                    except ValueError:
+                        warnings.append(
+                            "The link contains an invalid port number."
+                        )
+
                         warnings.append("The link does not use HTTPS.")
 
-                    if parsed.username or parsed.password:
+                  
+                    if "@" in parsed.netloc and not (
+                        parsed.username or parsed.password
+                    ):
+                        warnings.append(
+                            "The link contains an unusual @ symbol in its address."
+                        )
+
+                    if hostname and hostname.lower().count("-") >= 3:
+                        warnings.append(
+                            "The domain contains many hyphens. Check its spelling carefully."
+                        )
+
                         warnings.append("The link contains login details before the hostname.")
 
                     try:
