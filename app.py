@@ -316,6 +316,8 @@ def ask_ai(history, prompt, language):
                 system_instructions
             )
 
+            try:
+        # Your existing Gemini request code goes here
         response = client.models.generate_content(
             model=GEMINI_MODEL,
             contents=contents,
@@ -329,32 +331,32 @@ def ask_ai(history, prompt, language):
 
         return answer, None
 
-        except Exception as exc:
+    except Exception as exc:
         error_details = f"{type(exc).__name__}: {str(exc)[:500]}"
         st.error(f"Gemini AI error: {error_details}")
         return None, f"AI service error: {error_details}"
-
-def speak_text(text, language="English"):
-    if not text or not text.strip():
-        return
-
-    voice_languages = {
-        "English": "en-IN",
-        "Tamil": "ta-IN",
-        "Malayalam": "ml-IN",
-        "Hindi": "hi-IN",
-    }
-
-    speech_language = voice_languages.get(language, "en-IN")
-    safe_text = json.dumps(text, ensure_ascii=False).replace("</", "<\\/")
-
-    components.html(
-        f"""
-        <button onclick="speakAnswer()"
-            style="padding:10px 16px; border-radius:10px;
-                   cursor:pointer; font-size:15px;">
-            🔊 Listen to answer
-        </button>
+    
+    def speak_text(text, language="English"):
+        if not text or not text.strip():
+            return
+    
+        voice_languages = {
+            "English": "en-IN",
+            "Tamil": "ta-IN",
+            "Malayalam": "ml-IN",
+            "Hindi": "hi-IN",
+        }
+    
+        speech_language = voice_languages.get(language, "en-IN")
+        safe_text = json.dumps(text, ensure_ascii=False).replace("</", "<\\/")
+    
+        components.html(
+            f"""
+            <button onclick="speakAnswer()"
+                style="padding:10px 16px; border-radius:10px;
+                       cursor:pointer; font-size:15px;">
+                🔊 Listen to answer
+            </button>
 
         <script>
         function speakAnswer() {{
