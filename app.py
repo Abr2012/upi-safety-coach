@@ -276,48 +276,16 @@ def ask_ai(history, prompt, language):
             "settings. Never paste the secret key into public code."
         )
 
-    try:
+        try:
         client = genai.Client(
             api_key=GEMINI_API_KEY,
             http_options={"timeout": 30000},
         )
         messages = build_messages(history, prompt, language)
 
-        system_instructions = []
-        contents = []
+        # Keep your existing system_instructions,
+        # contents, and config code here.
 
-        for message in messages:
-            role = message.get("role", "user")
-            message_text = str(message.get("content", ""))
-
-            if not message_text.strip():
-                continue
-
-            if role == "system":
-                system_instructions.append(message_text)
-            elif role == "assistant":
-                contents.append({
-                    "role": "model",
-                    "parts": [{"text": message_text}],
-                })
-            else:
-                contents.append({
-                    "role": "user",
-                    "parts": [{"text": message_text}],
-                })
-        
-        config = {
-            "temperature": 0.2,
-            "max_output_tokens": 256,
-        }
-
-        if system_instructions:
-            config["system_instruction"] = "\n\n".join(
-                system_instructions
-            )
-
-            try:
-        # Your existing Gemini request code goes here
         response = client.models.generate_content(
             model=GEMINI_MODEL,
             contents=contents,
@@ -329,6 +297,12 @@ def ask_ai(history, prompt, language):
         if not answer:
             return None, "The AI returned no text. Please try again."
 
+        return answer, None
+
+    except Exception as exc:
+        error_details = f"{type(exc).__name__}: {str(exc)[:500]}"
+        st.error(f"Gemini AI error: {error_details}")
+        return None, f"AI service error: {error_details}"
         return answer, None
 
     except Exception as exc:
