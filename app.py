@@ -277,8 +277,11 @@ def ask_ai(history, prompt, language):
             "settings. Never paste the secret key into public code."
         )
 
-    try:
-        client = genai.Client(api_key=GEMINI_API_KEY)
+       try:
+        client = genai.Client(
+            api_key=GEMINI_API_KEY,
+            http_options={"timeout": 30000},
+        )
         messages = build_messages(history, prompt, language)
 
         system_instructions = []
