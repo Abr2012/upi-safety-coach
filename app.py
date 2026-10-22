@@ -305,9 +305,9 @@ def ask_ai(history, prompt, language):
                 })
 
         config = {
-            "temperature": 0.2,
-            "max_output_tokens": 1024,
-        }
+    "temperature": 0.2,
+    "max_output_tokens": 256,
+}
 
         if system_instructions:
             config["system_instruction"] = "\n\n".join(
