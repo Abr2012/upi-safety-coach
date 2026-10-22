@@ -34,7 +34,7 @@ except ImportError:
 # ============================================================
 
 APP_NAME = "UPI Safety Coach AI"
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
 
 
 def get_setting(name, default=""):
