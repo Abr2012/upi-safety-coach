@@ -8,6 +8,7 @@ from datetime import datetime
 from urllib.parse import urlparse, urlsplit
 
 import streamlit as st
+import streamlit.components.v1 as components
 from google import genai
 import speech_recognition as sr
 
@@ -331,7 +332,45 @@ def ask_ai(history, prompt, language):
             f"AI service error: {type(exc).__name__}: {str(exc)[:250]}"
         )
 
+def speak_text(text, language="English"):
+    if not text or not text.strip():
+        return
 
+    voice_languages = {
+        "English": "en-IN",
+        "Tamil": "ta-IN",
+        "Malayalam": "ml-IN",
+        "Hindi": "hi-IN",
+    }
+
+    speech_language = voice_languages.get(language, "en-IN")
+    safe_text = json.dumps(text, ensure_ascii=False).replace("</", "<\\/")
+
+    components.html(
+        f"""
+        <button onclick="speakAnswer()"
+            style="padding:10px 16px; border-radius:10px;
+                   cursor:pointer; font-size:15px;">
+            🔊 Listen to answer
+        </button>
+
+        <script>
+        function speakAnswer() {{
+            if (!("speechSynthesis" in window)) {{
+                alert("Speech playback is not supported by this browser.");
+                return;
+            }}
+
+            window.speechSynthesis.cancel();
+
+            const message = new SpeechSynthesisUtterance({safe_text});
+            message.lang = "{speech_language}";
+            window.speechSynthesis.speak(message);
+        }}
+        </script>
+        """,
+        height=60,
+    )
 # ============================================================
 # 5. REPORT GENERATION
 # ============================================================
@@ -681,6 +720,7 @@ with tabs[0]:
                 )
             else:
                 st.markdown(answer)
+                speak_text(answer, response_language)
 
         st.session_state.chat_history.append({
             "role": "assistant",
@@ -912,6 +952,7 @@ with tabs[3]:
             if answer:
                 st.subheader("AI Coach's Answer")
                 st.markdown(answer)
+                speak_text(answer, response_language)
 
                 st.session_state.report_items.append({
                     "type": "Voice AI question",
