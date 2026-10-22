@@ -332,7 +332,7 @@ def ask_ai(history, prompt, language):
     
     except Exception as exc:
         error_details = f"{type(exc).__name__}: {str(exc)[:500]}"
-        print(f"Gemini AI error: {error_details}")
+      st.error(f"Gemini AI error: {error_details}")
         return None, f"AI service error: {error_details}"
 
 
