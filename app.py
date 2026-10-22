@@ -713,13 +713,16 @@ with tabs[0]:
                     response_language,
                 )
 
+           
             if error:
-                st.error(error)
+                st.error(f"AI Coach error: {error}")
                 answer = (
-                    "I couldn't get an AI response. Please check the AI "
-                    "service configuration. Meanwhile, never share your "
-                    "UPI PIN or OTP, and do not approve unfamiliar payment requests."
+                    "I couldn't get an AI response. Please check the "
+                    "AI service configuration. Meanwhile, never share "
+                    "your UPI PIN or OTP, and do not approve unfamiliar "
+                    "payment requests."
                 )
+
             else:
                 st.markdown(answer)
                 speak_text(answer, response_language)
