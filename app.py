@@ -304,12 +304,14 @@ def ask_ai(history, prompt, language):
                     "parts": [{"text": message_text}],
                 })
 
+       
         config = {
             "max_output_tokens": 256,
             "thinking_config": {
                 "thinking_level": "MINIMAL",
             },
         }
+
 
         if system_instructions:
             config["system_instruction"] = "\n\n".join(
