@@ -269,14 +269,14 @@ Safety reference:
     messages.append({"role": "user", "content": prompt})
     return messages
 
-
 def ask_ai(history, prompt, language):
     if not GEMINI_API_KEY:
         return None, (
             "Gemini API key is missing. Check your Streamlit Secrets "
             "settings. Never paste the secret key into public code."
         )
-       try:
+
+    try:
         client = genai.Client(
             api_key=GEMINI_API_KEY,
             http_options={"timeout": 30000},
