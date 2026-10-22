@@ -718,6 +718,7 @@ with tabs[0]:
            
             if error:
                 st.error(f"AI Coach error: {error}")
+                st.exception(Exception(str(error)))
                 answer = (
                     "I couldn't get an AI response. Please check the "
                     "AI service configuration. Meanwhile, never share "
