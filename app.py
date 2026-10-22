@@ -312,7 +312,6 @@ def ask_ai(history, prompt, language):
             },
         }
 
-
         if system_instructions:
             config["system_instruction"] = "\n\n".join(
                 system_instructions
