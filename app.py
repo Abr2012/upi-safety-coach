@@ -330,10 +330,12 @@ def ask_ai(history, prompt, language):
 
         return answer, None
 
+    
     except Exception as exc:
-        return None, (
-            f"AI service error: {type(exc).__name__}: {str(exc)[:250]}"
-        )
+        error_details = f"{type(exc).__name__}: {str(exc)[:500]}"
+        print(f"Gemini AI error: {error_details}")
+        return None, f"AI service error: {error_details}"
+
 
 def speak_text(text, language="English"):
     if not text or not text.strip():
