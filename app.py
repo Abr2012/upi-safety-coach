@@ -303,10 +303,11 @@ def ask_ai(history, prompt, language):
                     "role": "user",
                     "parts": [{"text": message_text}],
                 })
-
-        config = {
-    "temperature": 0.2,
+config = {
     "max_output_tokens": 256,
+    "thinking_config": {
+        "thinking_level": "MINIMAL",
+    },
 }
 
         if system_instructions:
